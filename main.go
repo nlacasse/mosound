@@ -1,11 +1,17 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"os/exec"
+	"path/filepath"
 
 	"github.com/nlacasse/monome"
+)
+
+var (
+	soundDir = flag.String("sound-dir", "/home/nlacasse/sounds", "directory containing sound files")
 )
 
 func runDevice(g *monome.Grid) {
@@ -17,7 +23,7 @@ func runDevice(g *monome.Grid) {
 				continue
 			}
 			g.SetLED(keyEv.X, keyEv.Y, true)
-			sound := fmt.Sprintf("/home/nlacasse/sounds/%d%d.wav", keyEv.X, keyEv.Y)
+			sound := filepath.Join(*soundDir, fmt.Sprintf("%d%d.wav", keyEv.X, keyEv.Y))
 			c := exec.Command("mplayer", sound)
 			go func(keyEv monome.KeyEv) {
 				if err := c.Run(); err != nil {
@@ -33,8 +39,8 @@ func runDevice(g *monome.Grid) {
 }
 
 func main() {
+	flag.Parse()
 	m := monome.New()
-
 	for {
 		g := <-m.Devices
 		go runDevice(g)
