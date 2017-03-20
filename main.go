@@ -16,7 +16,23 @@ var (
 	serialoscd = flag.String("serialoscd", "", "serialoscd path, which will be started if not empty")
 )
 
+func drawInit(g *monome.Grid) {
+	for i := 0; i < g.Size[0]; i++ {
+		for j := 0; j < g.Size[1]; j++ {
+			g.SetLED(i, j, true)
+			time.Sleep(25 * time.Millisecond)
+		}
+	}
+	for i := 0; i < g.Size[0]; i++ {
+		for j := 0; j < g.Size[1]; j++ {
+			g.SetLED(i, j, false)
+			time.Sleep(25 * time.Millisecond)
+		}
+	}
+}
+
 func runDevice(g *monome.Grid) {
+	drawInit(g)
 	for {
 		select {
 		case keyEv := <-g.Ev:
