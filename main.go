@@ -6,6 +6,7 @@ import (
 	"log"
 	"os/exec"
 	"path/filepath"
+	"sync"
 	"time"
 
 	"github.com/nlacasse/monome"
@@ -33,20 +34,40 @@ func drawInit(g *monome.Grid) {
 
 func runDevice(g *monome.Grid) {
 	drawInit(g)
+
+	// Counts number of samples playing per button.
+	var stateMu sync.Mutex
+	var state [][]uint
+	for i := 0; i < g.Size[0]; i++ {
+		state = append(state, make([]uint, g.Size[1]))
+	}
+
 	for {
 		select {
 		case keyEv := <-g.Ev:
 			if keyEv.T == monome.KeyUp {
 				continue
 			}
-			g.SetLED(keyEv.X, keyEv.Y, true)
+
+			stateMu.Lock()
+			if state[keyEv.X][keyEv.Y] == 0 {
+				g.SetLED(keyEv.X, keyEv.Y, true)
+			}
+			state[keyEv.X][keyEv.Y]++
+			stateMu.Unlock()
+
 			sound := filepath.Join(*soundDir, fmt.Sprintf("%d%d.wav", keyEv.X, keyEv.Y))
 			c := exec.Command("aplay", sound)
 			go func(keyEv monome.KeyEv) {
 				if err := c.Run(); err != nil {
 					log.Print(err)
 				}
-				g.SetLED(keyEv.X, keyEv.Y, false)
+				stateMu.Lock()
+				state[keyEv.X][keyEv.Y]--
+				if state[keyEv.X][keyEv.Y] == 0 {
+					g.SetLED(keyEv.X, keyEv.Y, false)
+				}
+				stateMu.Unlock()
 			}(keyEv)
 		case <-g.Disconnect:
 			return
