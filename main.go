@@ -36,7 +36,6 @@ func runDevice(g *monome.Grid) {
 	for {
 		select {
 		case keyEv := <-g.Ev:
-			log.Printf("GOT KEY %x", keyEv)
 			if keyEv.T == monome.KeyUp {
 				continue
 			}
@@ -50,7 +49,6 @@ func runDevice(g *monome.Grid) {
 				g.SetLED(keyEv.X, keyEv.Y, false)
 			}(keyEv)
 		case <-g.Disconnect:
-			log.Printf("Disconnect!!")
 			return
 		}
 	}
