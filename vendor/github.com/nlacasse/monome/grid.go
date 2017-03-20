@@ -15,8 +15,8 @@ const (
 type KeyEvType int
 
 const (
-	KeyDown KeyEvType = iota
-	KeyUp
+	KeyUp   KeyEvType = 0
+	KeyDown KeyEvType = 1
 )
 
 type KeyEv struct {
@@ -46,7 +46,7 @@ type Grid struct {
 }
 
 func NewGrid(port int32) *Grid {
-	log.Printf("NewGrid")
+	log.Printf("NewGrid port=%v", port)
 	g := &Grid{
 		s: &osc.Server{
 			Addr: fmt.Sprintf("127.0.0.1:%d", gridServerPort),
@@ -77,14 +77,12 @@ func NewGrid(port int32) *Grid {
 }
 
 func (g *Grid) handlePrefix(msg *osc.Message) {
-	log.Printf("handlePrefix: %v", msg)
 	g.prefix = msg.Arguments[0].(string)
 	g.s.Handle(g.prefix+"/grid/key", g.handleKey)
 	g.ready <- struct{}{}
 }
 
 func (g *Grid) handleSize(msg *osc.Message) {
-	log.Printf("handleSize: %v", msg)
 	g.Size = [2]int{
 		int(msg.Arguments[0].(int32)),
 		int(msg.Arguments[1].(int32)),
@@ -92,25 +90,20 @@ func (g *Grid) handleSize(msg *osc.Message) {
 }
 
 func (g *Grid) handleId(msg *osc.Message) {
-	log.Printf("handleId: %v", msg)
 }
 
 func (g *Grid) handleHost(msg *osc.Message) {
-	log.Printf("handleHost: %v", msg)
 }
 
 func (g *Grid) handleRotation(msg *osc.Message) {
-	log.Printf("handleRotation: %v", msg)
 }
 
 func (g *Grid) handleDisconnect(msg *osc.Message) {
-	log.Printf("handleDisconnect: %v", msg)
 	g.s.Close()
 	g.Disconnect <- struct{}{}
 }
 
 func (g *Grid) handleKey(msg *osc.Message) {
-	log.Printf("handleKey: %v", msg)
 	g.Ev <- KeyEv{
 		X: int(msg.Arguments[0].(int32)),
 		Y: int(msg.Arguments[1].(int32)),
