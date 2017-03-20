@@ -65,6 +65,12 @@ func main() {
 		}
 		defer c.Process.Kill()
 		time.Sleep(2 * time.Second)
+
+		go func() {
+			c.Wait()
+			// If we get here, serialosc has crashed.  Bad news.
+			log.Panicf("serialosc has stopped!")
+		}()
 	}
 
 	m := monome.New()
