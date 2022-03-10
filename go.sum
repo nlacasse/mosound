@@ -1,0 +1,4 @@
+github.com/nlacasse/go-osc v0.0.0-20170318205032-ba3669f18aa3 h1:bVNYYmNRfo0T6FpOdPXAB00UMK5P4cp9eJB/828cliw=
+github.com/nlacasse/go-osc v0.0.0-20170318205032-ba3669f18aa3/go.mod h1:viBkQ6/kjI/xfejr6IhUAE5cABz7SA42z6SNJWFmOLw=
+github.com/nlacasse/monome v0.0.0-20170320022852-887faf8a0eae h1:sUvV/4GsF8J2xfd+3uOG3TLHZjvjbJ3BSjurUM1vqxc=
+github.com/nlacasse/monome v0.0.0-20170320022852-887faf8a0eae/go.mod h1:EzTuIKVpIFHYev5ovxFb1e4T6HSI7njUsGAsLjgaCAI=
